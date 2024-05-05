@@ -1,0 +1,191 @@
+basePath: /
+definitions:
+  controller.LoginBody:
+    properties:
+      host:
+        example: outlook.office365.com
+        type: string
+      password:
+        example: password1122
+        format: string
+        type: string
+      port:
+        example: "993"
+        type: string
+      username:
+        example: test@test.com
+        format: string
+        type: string
+    required:
+    - host
+    - password
+    - port
+    - username
+    type: object
+  controller.UpdateFlagsBody:
+    properties:
+      addFlags:
+        example:
+        - \Seen
+        - \Answered
+        items:
+          enum:
+          - \Seen
+          - \Answered
+          - \Flagged
+          - \Deleted
+          - \Draft
+          - \Recent
+          type: string
+        type: array
+      removeFlags:
+        example:
+        - \Seen
+        - \Answered
+        items:
+          enum:
+          - \Seen
+          - \Answered
+          - \Flagged
+          - \Deleted
+          - \Draft
+          - \Recent
+          type: string
+        type: array
+    required:
+    - addFlags
+    - removeFlags
+    type: object
+info:
+  contact:
+    email: bipinmhr10@gmail.com
+    name: Bipin Maharjan
+  description: This is Go Email Service Build with Go-Fiber and Go-Imap
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Go Email Service API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login API
+      parameters:
+      - description: Login Body
+        in: body
+        name: RequestBody
+        schema:
+          $ref: '#/definitions/controller.LoginBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Login
+      tags:
+      - Auth
+  /auth/logout:
+    get:
+      consumes:
+      - application/json
+      description: Logout API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: Logout
+      tags:
+      - Auth
+  /mailbox:
+    get:
+      consumes:
+      - application/json
+      description: get List of Mailboxes
+      produces:
+      - application/json
+      responses: {}
+      summary: Get list of Mailboxes
+      tags:
+      - Mailbox
+  /message/{mailbox}:
+    get:
+      description: Get All Preview Message in Desc Order
+      parameters:
+      - description: Mailbox Name
+        in: path
+        name: mailbox
+        required: true
+        type: string
+      - default: 1
+        description: Page Number
+        in: query
+        name: page
+        type: number
+      - default: 20
+        description: Page Size
+        in: query
+        name: pageSize
+        type: number
+      produces:
+      - application/json
+      responses: {}
+      summary: Get All Preview Message in Desc Order
+      tags:
+      - Message
+  /message/{mailbox}/{uid}:
+    get:
+      description: Get Message Details
+      parameters:
+      - description: Mailbox Name
+        in: path
+        name: mailbox
+        required: true
+        type: string
+      - description: Uid Number
+        in: path
+        name: uid
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Message Details
+      tags:
+      - Message
+    put:
+      description: Update Message flags
+      parameters:
+      - description: Mailbox Name
+        in: path
+        name: mailbox
+        required: true
+        type: string
+      - description: Uid Number
+        in: path
+        name: uid
+        required: true
+        type: number
+      - description: Update Body
+        in: body
+        name: updateBody
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UpdateFlagsBody'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update Message flags
+      tags:
+      - Message
+swagger: "2.0"
